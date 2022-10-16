@@ -7,7 +7,7 @@
 
 [![NPM](https://nodei.co/npm/apophis.png)](https://www.npmjs.com/package/apophis)
 
-CLI to talk to anyone connected to your network over HTTP, be it LAN or your hotspot. Doesn't require internet.
+CLI to talk to anyone connected to your network, be it LAN or your hotspot. Doesn't require internet.
 
 # Installation
 Make sure you have NodeJS **(>= v16.14.0)** [installed](https://nodejs.org/en/) and have NPM as well
