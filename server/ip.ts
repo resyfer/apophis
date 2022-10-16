@@ -1,4 +1,4 @@
-import os from "node:os";
+import * as os from "node:os";
 
 //https://askubuntu.com/a/723182
 const ethernetRegex = /^((en).+|Ethernet$)/;

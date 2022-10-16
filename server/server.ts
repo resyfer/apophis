@@ -1,10 +1,17 @@
-import net from "node:net";
-import process from "node:process";
+import * as net from "node:net";
+import * as process from "node:process";
+
+import boxen from "boxen";
+import chalk from "chalk";
+
 import { ip } from "./ip.js";
-import { ReqRes } from "./json.js";
+import { ReqRes } from "../json.js";
 import { port } from "./port.js";
-import { getRandomRgb } from "./rgb.js";
-import { receive, send } from "./transfer.js";
+import { getRandomRgb } from "../rgb.js";
+import { receive, send } from "../transfer.js";
+
+// https://stackoverflow.com/a/70106896
+import manifest from "../package.json" assert { type: "json" };
 
 interface Client {
   socket: net.Socket;
@@ -32,17 +39,26 @@ function createServer() {
       port: socket.remotePort!,
     });
 
+    /**!
+     * Client has 4 stages :
+     * not-connected, uninitialized, connected, disconnected
+     *
+     * Unintialized is the state when client is connected
+     * but yet to verify if the username they sent on initial
+     * connection is already taken by another client or not
+     */
+
     let initializeClient = true;
     const index = clients.length - 1;
 
     socket.on("data", (data) => {
       const { message } = receive(data);
 
+      // Client is uninitialized if it is not confirmed
+      // if no other client has taken the username
       if (initializeClient) {
         const username = message;
-        const checkIndex = clients.findIndex(
-          (client) => client?.username === username
-        );
+        const checkIndex = clients.findIndex((client) => client?.username === username);
 
         if (checkIndex === -1) {
           clients[index]!.username = username;
@@ -68,20 +84,32 @@ function createServer() {
   });
 
   server.listen(port, ip, () => {
-    console.log(`Server started: ${ip}:${port}`);
+    console.log(
+      boxen(`Server started: ${chalk.bold.yellow(`${ip}:${port}`)}`, {
+        title: `${chalk.bold.rgb(160, 32, 240)("Apophis")} ${chalk.blue(`v${manifest.version}`)}`,
+        textAlignment: "center",
+        padding: 1,
+        margin: 1,
+        borderColor: "green",
+      })
+    );
   });
 
   server.on("error", () => {
-    console.log("Error");
+    console.error("Error");
+    process.exit(1);
+  });
+
+  server.on("close", () => {
     process.exit(0);
   });
 }
 
-function broadcast(
-  clientIndex: number,
-  message?: string,
-  status: "connect" | "message" | "disconnect" = "message"
-) {
+/**
+ * @description Send a message to all the clients
+ * connected to a server
+ */
+function broadcast(clientIndex: number, message?: string, status: "connect" | "message" | "disconnect" = "message") {
   const port = clients[clientIndex]!.port;
   const address = clients[clientIndex]!.address;
   const username = clients[clientIndex]!.username;
@@ -107,7 +135,6 @@ function broadcast(
     if (client === null) {
       return;
     }
-
     send(client.socket, res.message, true, res.username, res.rgb);
   });
 }

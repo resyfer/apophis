@@ -1,12 +1,17 @@
-import process from "node:process";
+#! /usr/bin/env node
+
+import * as process from "node:process";
+
 import { args, setArgs } from "./args.js";
 import { infoChecker } from "./cli.js";
-import { createClient, setUsername } from "./client.js";
-import { setIP } from "./ip.js";
-import { setPort } from "./port.js";
-import { receiveMessages } from "./receive.js";
-import { createServer } from "./server.js";
-import { setupTerm } from "./terminal.js";
+
+import { createClient, setUsername } from "./client/client.js";
+import { receiveMessages } from "./client/receive.js";
+import { setupTerm } from "./client/terminal.js";
+
+import { setIP } from "./server/ip.js";
+import { setPort } from "./server/port.js";
+import { createServer } from "./server/server.js";
 
 (async () => {
   if (!process.stdout.isTTY) {
@@ -16,9 +21,9 @@ import { setupTerm } from "./terminal.js";
 
   setArgs();
   infoChecker();
-  setIP();
 
   if (args["s"]) {
+    setIP();
     await setPort();
     createServer();
   } else {

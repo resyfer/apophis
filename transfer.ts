@@ -1,14 +1,9 @@
-import net from "node:net";
+import * as net from "node:net";
+
 import { ReqRes } from "./json.js";
 import { RGB } from "./rgb.js";
 
-function send(
-  socket: net.Socket,
-  message: string,
-  ok = true,
-  username?: string,
-  rgb?: RGB
-) {
+function send(socket: net.Socket, message: string, ok = true, username?: string, rgb?: RGB) {
   socket.write(
     JSON.stringify({
       ok,

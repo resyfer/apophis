@@ -1,8 +1,9 @@
-import chalk from "chalk";
-import getPort from "get-port";
 import { exit } from "node:process";
 
-import { args } from "./args.js";
+import chalk from "chalk";
+import getPort from "get-port";
+
+import { args } from "../args.js";
 
 let port: number;
 const DEFAULT_PORTS = [3000, 3001, 3002, 5000, 8000, 8080];

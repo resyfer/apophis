@@ -1,7 +1,10 @@
-import net from "node:net";
+import * as net from "node:net";
+
 import terminalKit from "terminal-kit";
-import manifest from "./package.json" assert { type: "json" };
-import { send } from "./transfer.js";
+
+import manifest from "../package.json" assert { type: "json" };
+
+import { send } from "../transfer.js";
 
 const term = terminalKit.terminal;
 
@@ -11,13 +14,21 @@ let cursorIndex = 0;
 function setupTerm(client: net.Socket) {
   term.fullscreen(true);
   term.grabInput(true);
-  term.hideCursor();
+  term.hideCursor(); // Using | for cusor since tracking the input myself
 
   term.windowTitle(manifest.name);
 
   term.moveTo(0, 0);
+
+  /**
+   * Cursor is saved at certain points where, in the flow of
+   * chatting there is a need to go back to the cursor position
+   * through `term.restoreCursor()` and erase everything after
+   * it to overwrite it
+   */
   term.saveCursor();
 
+  // Mapping keys to reflect `input` and `cursorIndex`
   term.on("key", (name: string, _matches: any, _data: any) => {
     if (name === "CTRL_C") {
       term.reset();
@@ -54,6 +65,7 @@ function setupTerm(client: net.Socket) {
     term.restoreCursor();
     term.eraseDisplayBelow();
 
+    // Display the `input` as well as the cursor at `cursorIndex`
     term(input.slice(0, cursorIndex) + "|" + input.slice(cursorIndex));
   });
 }
