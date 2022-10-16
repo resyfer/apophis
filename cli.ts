@@ -19,24 +19,38 @@ function infoChecker() {
 function helpChecker() {
   if (args["help"]) {
     console.log(`
-${chalk.yellow("USAGE")}:  ${chalk.rgb(160, 32, 240)(manifest.name)} [OPTIONS]
+${chalk.yellow("USAGE")}:  ${chalk.rgb(
+      160,
+      32,
+      240
+    )(manifest.name)} [FLAGS] [OPTIONS]
+
+${chalk.yellow("FLAGS")}:
+  ${chalk.bold("-h, --help")}                Show this helpful message and exit
+  ${chalk.bold("-v, --version")}             Show the version
+  ${chalk.bold("-s, --server")}              Start the CLI Server
+  ${chalk.bold("-c, --client")}              Start the CLI Client
+
 ${chalk.yellow("OPTIONS")}:
-  -h, --help                Show this helpful message and exit
-  -v, --version             Show the version
-  -d, --dir  PATH           Provide the relative path of the directory to expose from the PWD
-  -p, --port PORT           Provide the preferable PORT
-  -t, --text                Get all the files except media as text (no prompt to download them when visiting URL)
+  ${chalk.bold("-u, --username")} ${chalk.underline(
+      "USERNAME"
+    )}   Set the username for the client
+  ${chalk.bold("-i, --ip")}  ${chalk.underline(
+      "HOST_IP"
+    )}         Set the Host IP of the Server
+  ${chalk.bold("-p, --port")} ${chalk.underline(
+      "PORT"
+    )}           Set the Port of the Server
+
 ${chalk.yellow("EXAMPLES")}:
-  ${manifest.name}
   ${manifest.name} -h
-  ${manifest.name} --help
-  ${manifest.name} --text
-  ${manifest.name} -t
-  ${manifest.name} --dir="../hello"
-  ${manifest.name} -d ../hello
-  ${manifest.name} --port 9876
-  ${manifest.name} -p 9876
-  ${manifest.name} -d . -p 9876 -t
+  ${manifest.name} -v
+  ${
+    manifest.name
+  } -s                           Start the server on an available port
+  ${
+    manifest.name
+  } -c -i 192.16.199.27 -p 3000  Start the client and connect to HOST_IP on PORT
 `);
     exit(0);
   }

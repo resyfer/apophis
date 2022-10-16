@@ -1,5 +1,6 @@
 import process from "node:process";
 import { args, setArgs } from "./args.js";
+import { infoChecker } from "./cli.js";
 import { createClient, setUsername } from "./client.js";
 import { setIP } from "./ip.js";
 import { setPort } from "./port.js";
@@ -14,10 +15,11 @@ import { setupTerm } from "./terminal.js";
   }
 
   setArgs();
+  infoChecker();
   setIP();
-  await setPort();
 
   if (args["s"]) {
+    await setPort();
     createServer();
   } else {
     const client = createClient();
